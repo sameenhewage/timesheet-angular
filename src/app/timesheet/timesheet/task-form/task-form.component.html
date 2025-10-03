@@ -57,7 +57,7 @@
           ngbDatepicker
           #e="ngbDatepicker"
           [class.is-invalid]="endDate.invalid && endDate.touched"
-          [minDate]="today"
+          [minDate]="startDate.value || today"
         />
         <button
           class="btn btn-outline-secondary bi bi-calendar3"
