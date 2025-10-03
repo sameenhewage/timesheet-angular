@@ -10,7 +10,12 @@ import {
   Output,
   SimpleChanges,
 } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormControl,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import {
   NgbDatepickerModule,
   NgbTypeaheadModule,
@@ -57,6 +62,18 @@ export class TaskFormComponent {
   // Formatters for typeahead
   resultFormatter = (task: TaskTypeDTO) => (task ? task.name : '');
   inputFormatter = (task: TaskTypeDTO) => (task ? task.name : '');
+
+  get taskName(): FormControl {
+    return this.taskForm.get('taskName') as FormControl;
+  }
+
+  get startDate(): FormControl {
+    return this.taskForm.get('startDate') as FormControl;
+  }
+
+  get endDate(): FormControl {
+    return this.taskForm.get('endDate') as FormControl;
+  }
 
   onSubmit() {
     let startDate: any = this.taskForm.controls['startDate'].value;
