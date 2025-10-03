@@ -1,5 +1,18 @@
+@if (taskDataError.message !== '') {
+<div class="alert alert-danger" role="alert">
+  {{ taskDataError.message }} ({{ taskDataError.statusCode }})
+</div>
+} @else {
 <app-task-form
   (onSubmitEvent)="onSubmit($event)"
-  (onSearchEmit)="onTaskSearch($event)"
   [searchTask]="searchTask"
 ></app-task-form>
+
+<app-task-list [logData]="(logData$ | async) || []"></app-task-list>
+} @if (isLoading$ | async) {
+<div class="d-flex justify-content-center">
+  <div class="spinner-border" role="status">
+    <span class="visually-hidden">Loading...</span>
+  </div>
+</div>
+}

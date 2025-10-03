@@ -1,1 +1,28 @@
-<p>task-list works!</p>
+@if (logData.length <= 0) {
+<div class="mt-5">
+  <div class="alert alert-info" role="alert">No data to display.</div>
+</div>
+} @else {
+<div class="mt-5">
+  <div class="table-responsive">
+    <table class="table">
+      <thead class="table-light">
+        <tr>
+          <th scope="col">Task</th>
+          <th scope="col">Start</th>
+          <th scope="col">End</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (log of logData; track log.id; let i = $index) {
+        <tr>
+          <td>{{ log.task }}</td>
+          <td>{{ log.startDate | date : "yyyy-MM-dd" }}</td>
+          <td>{{ log.endDate | date : "yyyy-MM-dd" }}</td>
+        </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</div>
+}

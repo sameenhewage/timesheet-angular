@@ -1,6 +1,17 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { catchError, EMPTY, Observable, ObservedValueOf, of, tap } from 'rxjs';
+import {
+  BehaviorSubject,
+  catchError,
+  EMPTY,
+  finalize,
+  map,
+  Observable,
+  ObservedValueOf,
+  of,
+  startWith,
+  tap,
+} from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { TimeLogDTO } from '../models/timeLog.model';
 import { TaskTypeDTO } from '../models/taskType.model';
@@ -17,6 +28,8 @@ export class TimesheetService {
     message: '',
     statusCode: 0,
   };
+
+  isLoading$ = new BehaviorSubject<boolean>(true);
 
   constructor() {}
 
@@ -36,7 +49,8 @@ export class TimesheetService {
           this.taskDataError.message = error.message;
           this.taskDataError.statusCode = error.status;
           return of([]);
-        })
+        }),
+        finalize(() => this.isLoading$.next(false))
       );
   }
 
@@ -48,12 +62,14 @@ export class TimesheetService {
    * @returns {Observable<TimeLogDTO>} An observable containing the saved time log, or an empty observable if the API call fails.
    */
   saveTaskData(data: any): Observable<TimeLogDTO> {
+    this.isLoading$.next(true);
     return this._httpClient.post<TimeLogDTO>(`${this._baseUrlLog}`, data).pipe(
       catchError((error) => {
         this.taskDataError.message = error.message;
         this.taskDataError.statusCode = error.status;
         return EMPTY;
-      })
+      }),
+      finalize(() => this.isLoading$.next(false))
     );
   }
 
@@ -63,13 +79,15 @@ export class TimesheetService {
    * and an empty observable is returned.
    * @returns {Observable<TimeLogDTO[]>} An observable containing an array of time logs, or an empty observable if the API call fails.
    */
-  getLogData(): Observable<TimeLogDTO> {
-    return this._httpClient.get<TimeLogDTO>(`${this._baseUrlLog}`).pipe(
+  getLogData(): Observable<TimeLogDTO[]> {
+    this.isLoading$.next(true);
+    return this._httpClient.get<TimeLogDTO[]>(`${this._baseUrlLog}`).pipe(
       catchError((error) => {
         this.taskDataError.message = error.message;
         this.taskDataError.statusCode = error.status;
-        return EMPTY;
-      })
+        return of([]);
+      }),
+      finalize(() => this.isLoading$.next(false))
     );
   }
 }

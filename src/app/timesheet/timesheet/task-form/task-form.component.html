@@ -1,7 +1,7 @@
-<div class="task-form container-fluid mt-3">
+<div class="task-form mt-3">
   <form [formGroup]="taskForm" (ngSubmit)="onSubmit()" class="row g-3">
     <div class="col-12 col-md-3col-12 col-md-3 position-relative">
-      <label for="">Task</label>
+      <label for="">TASK</label>
       <input
         type="text"
         class="form-control"
@@ -20,7 +20,7 @@
     </div>
 
     <div class="col-12 col-md-3 position-relative">
-      <label for="">Start</label>
+      <label for="">START</label>
       <div class="input-group">
         <input
           class="form-control"
@@ -30,7 +30,7 @@
           ngbDatepicker
           #s="ngbDatepicker"
           [class.is-invalid]="startDate.invalid && startDate.touched"
-          [minDate]="minDate"
+          [minDate]="today"
         />
         <button
           class="btn btn-outline-secondary bi bi-calendar3"
@@ -47,7 +47,7 @@
     </div>
 
     <div class="col-12 col-md-3 position-relative">
-      <label for="">End</label>
+      <label for="">END</label>
       <div class="input-group">
         <input
           class="form-control"
@@ -57,7 +57,7 @@
           ngbDatepicker
           #e="ngbDatepicker"
           [class.is-invalid]="endDate.invalid && endDate.touched"
-          [minDate]="minDate"
+          [minDate]="today"
         />
         <button
           class="btn btn-outline-secondary bi bi-calendar3"
