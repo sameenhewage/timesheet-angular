@@ -9,7 +9,7 @@
         [ngbTypeahead]="searchTask"
         [resultFormatter]="resultFormatter"
         [inputFormatter]="inputFormatter"
-        [class.is-invalid]="taskName.touched && taskName.touched"
+        [class.is-invalid]="taskName.invalid && taskName.touched"
         placeholder="Start typing to search tasks..."
       />
 
@@ -29,7 +29,8 @@
           formControlName="startDate"
           ngbDatepicker
           #s="ngbDatepicker"
-          [class.is-invalid]="startDate.touched && startDate.touched"
+          [class.is-invalid]="startDate.invalid && startDate.touched"
+          [minDate]="minDate"
         />
         <button
           class="btn btn-outline-secondary bi bi-calendar3"
@@ -55,7 +56,8 @@
           formControlName="endDate"
           ngbDatepicker
           #e="ngbDatepicker"
-          [class.is-invalid]="endDate.touched && endDate.touched"
+          [class.is-invalid]="endDate.invalid && endDate.touched"
+          [minDate]="minDate"
         />
         <button
           class="btn btn-outline-secondary bi bi-calendar3"

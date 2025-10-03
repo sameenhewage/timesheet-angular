@@ -17,7 +17,9 @@ import {
   Validators,
 } from '@angular/forms';
 import {
+  NgbCalendar,
   NgbDatepickerModule,
+  NgbDateStruct,
   NgbTypeaheadModule,
 } from '@ng-bootstrap/ng-bootstrap';
 import {
@@ -43,10 +45,6 @@ import { TaskTypeDTO } from '../../models/taskType.model';
   styleUrl: './task-form.component.scss',
 })
 export class TaskFormComponent {
-  fb = inject(FormBuilder);
-
-  timesheetService = inject(TimesheetService);
-
   @Input() searchTask!: (
     text$: Observable<string>
   ) => Observable<TaskTypeDTO[]>;
@@ -54,7 +52,11 @@ export class TaskFormComponent {
   @Output() onSubmitEvent = new EventEmitter();
   @Output() onSearchEmit = new EventEmitter();
 
-  taskForm = this.fb.group({
+  private _fb = inject(FormBuilder);
+
+  private _calender = inject(NgbCalendar);
+
+  taskForm = this._fb.group({
     taskName: ['', [Validators.required]],
     startDate: [new Date(), [Validators.required]],
     endDate: [new Date(), [Validators.required]],
@@ -62,6 +64,14 @@ export class TaskFormComponent {
   // Formatters for typeahead
   resultFormatter = (task: TaskTypeDTO) => (task ? task.name : '');
   inputFormatter = (task: TaskTypeDTO) => (task ? task.name : '');
+
+  minDate!: NgbDateStruct;
+
+  constructor() {
+    //task min date to today
+    //cant add previous dates
+    this.minDate = this._calender.getToday();
+  }
 
   get taskName(): FormControl {
     return this.taskForm.get('taskName') as FormControl;
