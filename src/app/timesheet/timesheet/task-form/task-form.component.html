@@ -1,25 +1,37 @@
-<div class="task-form">
-  <form [formGroup]="taskForm" (ngSubmit)="onSubmit()">
-    <div class="form-group">
+<div class="task-form container-fluid mt-3">
+  <form [formGroup]="taskForm" (ngSubmit)="onSubmit()" class="row g-3">
+    <div class="col-12 col-md-3col-12 col-md-3 position-relative">
       <label for="">Task</label>
-      <select name="" id="" formControlName="task">
-        <option value="null" selected disabled>Select Options</option>
-        @for (task of tasks; track tasks?.id) {
-        <option [value]="task?.name">{{ task.name }}</option>
-        }
-      </select>
+      <input
+        type="text"
+        class="form-control"
+        formControlName="taskName"
+        [ngbTypeahead]="searchTask"
+        [resultFormatter]="resultFormatter"
+        [inputFormatter]="inputFormatter"
+        [class.is-invalid]="taskForm.controls['taskName'].errors?.['required'] &&
+      taskForm.controls['taskName'].touched"
+        placeholder="Start typing to search tasks..."
+      />
+
+      @if (taskForm.controls['taskName'].errors?.['required'] &&
+      taskForm.controls['taskName'].touched) {
+      <div class="invalid-feedback position-absolute">Task is required.</div>
+      }
     </div>
 
-    <div class="form-group">
+    <div class="col-12 col-md-3 position-relative">
       <label for="">Start</label>
       <div class="input-group">
         <input
           class="form-control"
           placeholder="yyyy-mm-dd"
           name="ds"
-          formControlName="start"
+          formControlName="startDate"
           ngbDatepicker
           #s="ngbDatepicker"
+          [class.is-invalid]="taskForm.controls['startDate'].errors?.['required'] &&
+      taskForm.controls['startDate'].touched"
         />
         <button
           class="btn btn-outline-secondary bi bi-calendar3"
@@ -27,18 +39,26 @@
           type="button"
         ></button>
       </div>
+      @if (taskForm.controls['startDate'].errors?.['required'] &&
+      taskForm.controls['startDate'].touched) {
+      <div class="invalid-feedback d-block position-absolute">
+        Start date is required.
+      </div>
+      }
     </div>
 
-    <div class="form-group">
+    <div class="col-12 col-md-3 position-relative">
       <label for="">End</label>
       <div class="input-group">
         <input
           class="form-control"
           placeholder="yyyy-mm-dd"
           name="de"
-          formControlName="end"
+          formControlName="endDate"
           ngbDatepicker
           #e="ngbDatepicker"
+          [class.is-invalid]="taskForm.controls['endDate'].errors?.['required'] &&
+      taskForm.controls['endDate'].touched"
         />
         <button
           class="btn btn-outline-secondary bi bi-calendar3"
@@ -46,10 +66,22 @@
           type="button"
         ></button>
       </div>
+      @if (taskForm.controls['endDate'].errors?.['required'] &&
+      taskForm.controls['endDate'].touched) {
+      <div class="invalid-feedback d-block position-absolute">
+        End date is required.
+      </div>
+      }
     </div>
 
-    <div class="form-group">
-      <button type="submit">Save</button>
+    <div class="col-12 col-md-3 d-flex align-items-end">
+      <button
+        type="submit"
+        class="btn btn-primary"
+        [disabled]="taskForm.invalid"
+      >
+        Save
+      </button>
     </div>
   </form>
 </div>

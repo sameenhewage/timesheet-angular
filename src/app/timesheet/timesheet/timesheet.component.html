@@ -1,4 +1,5 @@
 <app-task-form
-  [tasks]="taskData | async"
   (onSubmitEvent)="onSubmit($event)"
+  (onSearchEmit)="onTaskSearch($event)"
+  [searchTask]="searchTask"
 ></app-task-form>
