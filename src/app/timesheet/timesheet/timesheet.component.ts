@@ -40,6 +40,10 @@ export class TimesheetComponent {
       })
     );
 
+  /**
+   * Submits a new time log to the API and updates the observable containing the list of time logs.
+   * @param {any} event The event containing the new time log data.
+   */
   onSubmit(event: any) {
     const data: any = {
       startDate: event.startDate,

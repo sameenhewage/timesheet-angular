@@ -142,7 +142,7 @@ export class TaskFormComponent {
     const data = {
       startDate: startDateObj,
       endDate: endDateObj,
-      task: task?.name || '', // task name string
+      task: task?.name || '',
     };
 
     this.onSubmitEvent.emit(data);
