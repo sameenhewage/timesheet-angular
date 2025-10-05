@@ -1,0 +1,14 @@
+:host ::ng-deep ngb-typeahead-window.dropdown-menu {
+  max-height: 300px; 
+  overflow-y: auto;
+}
+
+
+:host ::ng-deep .ngb-typeahead-window::-webkit-scrollbar {
+  width: 8px;
+}
+
+:host ::ng-deep .ngb-typeahead-window::-webkit-scrollbar-thumb {
+  background-color: #ccc;
+  border-radius: 4px;
+}

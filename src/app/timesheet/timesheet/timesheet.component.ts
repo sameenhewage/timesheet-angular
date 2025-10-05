@@ -3,7 +3,6 @@ import { TaskFormComponent } from './task-form/task-form.component';
 import { TimesheetService } from '../services/timesheet.service';
 import { CommonModule } from '@angular/common';
 import {
-  BehaviorSubject,
   debounceTime,
   distinctUntilChanged,
   Observable,
@@ -12,6 +11,7 @@ import {
   tap,
 } from 'rxjs';
 import { TaskListComponent } from './task-list/task-list.component';
+import { TimeLogDTO } from '../models/timeLog.model';
 
 @Component({
   selector: 'app-timesheet',
@@ -20,10 +20,10 @@ import { TaskListComponent } from './task-list/task-list.component';
   templateUrl: './timesheet.component.html',
   styleUrl: './timesheet.component.scss',
 })
-export class TimesheetComponent {
+export class TimesheetComponent implements OnInit {
   private _timeSheetService = inject(TimesheetService);
 
-  logData$ = this._timeSheetService.getLogData();
+  logData$ = this._timeSheetService.logData$;
 
   taskDataError = this._timeSheetService.taskDataError;
 
@@ -40,6 +40,10 @@ export class TimesheetComponent {
       })
     );
 
+  ngOnInit(): void {
+    this._timeSheetService.refreshLogData();
+  }
+
   /**
    * Submits a new time log to the API and updates the observable containing the list of time logs.
    * @param {any} event The event containing the new time log data.
@@ -51,14 +55,6 @@ export class TimesheetComponent {
       task: event.task,
     };
 
-    this._timeSheetService
-      .saveTaskData(data)
-      .pipe(
-        switchMap(() => this._timeSheetService.getLogData()), // get updated logs
-        tap((logs) => {
-          this.logData$ = of(logs); // <-- update observable
-        })
-      )
-      .subscribe();
+    this._timeSheetService.saveTaskData(data).subscribe();
   }
 }

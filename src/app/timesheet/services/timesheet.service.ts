@@ -3,6 +3,7 @@ import { inject, Injectable } from '@angular/core';
 import {
   BehaviorSubject,
   catchError,
+  delay,
   EMPTY,
   finalize,
   map,
@@ -11,6 +12,8 @@ import {
   of,
   startWith,
   tap,
+  shareReplay,
+  switchMap,
 } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { TimeLogDTO } from '../models/timeLog.model';
@@ -24,14 +27,43 @@ export class TimesheetService {
   private _baseUrlTaskType = environment.baseUrl + '/tasktype';
   private _baseUrlLog = environment.baseUrl + '/log';
 
+  private _refreshTrigger$ = new BehaviorSubject<void>(undefined);
+
   taskDataError = {
     message: '',
     statusCode: 0,
   };
 
-  isLoading$ = new BehaviorSubject<boolean>(true);
+  isLoading$ = new BehaviorSubject<boolean>(false);
+
+  /**
+   * An observable containing an array of time logs.
+   * Triggered by `_refreshTrigger$` and fetches data from the API.
+   * Populates `taskDataError` on error and manages loading state.
+   * @returns {Observable<TimeLogDTO[]>} An observable containing an array of time logs.
+   */
+  public logData$ = this._refreshTrigger$.pipe(
+    // Fetch time logs when `_refreshTrigger$` emits
+    switchMap(() => {
+      return this._httpClient.get<TimeLogDTO[]>(`${this._baseUrlLog}`).pipe(
+        tap(() => this.isLoading$.next(true)),
+        catchError((error) => {
+          this.taskDataError.message = error.message;
+          this.taskDataError.statusCode = error.status;
+          return of([]); //return empty array on error
+        }),
+        finalize(() => this.isLoading$.next(false)) // Set loading false when done
+      );
+    }),
+    // Share the observable and replay the latest value
+    shareReplay({ bufferSize: 1, refCount: true })
+  );
 
   constructor() {}
+
+  refreshLogData(): void {
+    this._refreshTrigger$.next(undefined);
+  }
 
   /**
    * Fetches task types from the API based on the given term.
@@ -64,28 +96,11 @@ export class TimesheetService {
   saveTaskData(data: any): Observable<TimeLogDTO> {
     this.isLoading$.next(true);
     return this._httpClient.post<TimeLogDTO>(`${this._baseUrlLog}`, data).pipe(
+      tap(() => this.refreshLogData()),
       catchError((error) => {
         this.taskDataError.message = error.message;
         this.taskDataError.statusCode = error.status;
         return EMPTY;
-      }),
-      finalize(() => this.isLoading$.next(false))
-    );
-  }
-
-  /**
-   * Fetches time logs from the API.
-   * If the API call fails, an error object is populated with the error message and status code,
-   * and an empty observable is returned.
-   * @returns {Observable<TimeLogDTO[]>} An observable containing an array of time logs, or an empty observable if the API call fails.
-   */
-  getLogData(): Observable<TimeLogDTO[]> {
-    this.isLoading$.next(true);
-    return this._httpClient.get<TimeLogDTO[]>(`${this._baseUrlLog}`).pipe(
-      catchError((error) => {
-        this.taskDataError.message = error.message;
-        this.taskDataError.statusCode = error.status;
-        return of([]);
       }),
       finalize(() => this.isLoading$.next(false))
     );

@@ -1,18 +1,30 @@
-@if (taskDataError.message !== '') {
-<div class="alert alert-danger" role="alert">
-  {{ taskDataError.message }} ({{ taskDataError.statusCode }})
-</div>
-} @else {
 <app-task-form
   (onSubmitEvent)="onSubmit($event)"
   [searchTask]="searchTask"
 ></app-task-form>
 
-<app-task-list [logData]="(logData$ | async) || []"></app-task-list>
-} @if (isLoading$ | async) {
-<div class="d-flex justify-content-center">
+<!-- Show error message if API call fails -->
+@if (taskDataError.message !== '') {
+<div class="alert alert-danger mt-5" role="alert">
+  {{ taskDataError.message }} ({{ taskDataError.statusCode }})
+</div>
+}
+
+<!-- Show loader while data is being fetched -->
+@if (isLoading$ | async) {
+<div class="d-flex justify-content-center mt-5">
   <div class="spinner-border" role="status">
     <span class="visually-hidden">Loading...</span>
   </div>
 </div>
+}
+
+<!-- Show info message if no data is available -->
+@if (!(isLoading$ | async) && (logData$ | async)?.length === 0) {
+<div class="alert alert-info my-3">No data to display.</div>
+}
+
+<!-- Show task list if data is available -->
+@if (!(isLoading$ | async) && (logData$ | async)?.length) {
+<app-task-list [logData]="(logData$ | async) || []"></app-task-list>
 }
