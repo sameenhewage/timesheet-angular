@@ -1,7 +1,11 @@
-<div class="header flex d-flex space-x-4 ">
-    <ng-container *ngFor="let r of routes">       
-         <a [routerLink]='r.url' class="route-link" 
-        routerLinkActive="bg-slate-400 text-white bg-secondary" >{{r.title}}</a>
-    </ng-container> 
-    <app-style-switcher></app-style-switcher>
+<div class="header flex d-flex space-x-4">
+  <ng-container *ngFor="let r of routes">
+    <a
+      [routerLink]="r.url"
+      class="route-link me-3"
+      routerLinkActive="bg-slate-400 text-white bg-secondary"
+      >{{ r.title }}</a
+    >
+  </ng-container>
+  <app-style-switcher></app-style-switcher>
 </div>

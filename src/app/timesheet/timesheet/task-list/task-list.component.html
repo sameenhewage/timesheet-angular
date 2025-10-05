@@ -17,8 +17,8 @@
         @for (log of logData; track log.id; let i = $index) {
         <tr>
           <td>{{ log.task }}</td>
-          <td>{{ log.startDate | date : "yyyy-MM-dd" }}</td>
-          <td>{{ log.endDate | date : "yyyy-MM-dd" }}</td>
+          <td>{{ log.startDate | date : "MMM d, y, h:mm:ss a" }}</td>
+          <td>{{ log.endDate | date : "MMM d, y, h:mm:ss a" }}</td>
         </tr>
         }
       </tbody>

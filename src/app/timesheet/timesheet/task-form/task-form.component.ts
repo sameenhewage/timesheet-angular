@@ -11,6 +11,7 @@ import {
   NgbDatepickerModule,
   NgbDateStruct,
   NgbTypeaheadModule,
+  NgbTimepicker,
 } from '@ng-bootstrap/ng-bootstrap';
 import { Observable } from 'rxjs';
 import { TaskTypeDTO } from '../../models/taskType.model';
@@ -42,8 +43,8 @@ export class TaskFormComponent {
    * It contains the date and task data.
    */
   @Output() onSubmitEvent = new EventEmitter<{
-    startDate: Date;
-    endDate: Date;
+    startDate: string;
+    endDate: string;
     task: string;
   }>();
 
@@ -116,33 +117,39 @@ export class TaskFormComponent {
    * Submits the form.
    */
   onSubmit() {
-    // get date values
-    const startStruct = this.startDate.value as NgbDateStruct | null;
-    const endStruct = this.endDate.value as NgbDateStruct | null;
+    const { taskName, startDate, endDate }: any = this.taskForm.value;
 
-    if (!startStruct || !endStruct) {
-      // show error or stop submit
+    if (!startDate || !endDate) {
       return;
     }
 
-    const startDateObj = new Date(
-      startStruct.year,
-      startStruct.month - 1,
-      startStruct.day
-    );
-    const endDateObj = new Date(
-      endStruct.year,
-      endStruct.month - 1,
-      endStruct.day
+    const now = new Date();
+
+    // Set start date with the selected day but current time (hours, minutes, seconds)
+    const task_startDate = new Date(
+      startDate.year,
+      startDate.month - 1,
+      startDate.day,
+      now.getHours(),
+      now.getMinutes(),
+      now.getSeconds()
     );
 
-    // get task
-    const task = this.taskName.value as TaskTypeDTO;
+    // Set end date with the selected day and same time as start date
+    // This ensures both start and end times are aligned with current time
+    const task_endDate = new Date(
+      endDate.year,
+      endDate.month - 1,
+      endDate.day,
+      now.getHours(),
+      now.getMinutes(),
+      now.getSeconds()
+    );
 
     const data = {
-      startDate: startDateObj,
-      endDate: endDateObj,
-      task: task?.name || '',
+      task: taskName?.name,
+      startDate: task_startDate.toISOString(),
+      endDate: task_endDate.toISOString(),
     };
 
     this.onSubmitEvent.emit(data);
